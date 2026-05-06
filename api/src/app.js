@@ -12,18 +12,23 @@ const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
 // MIDDLEWARE: CORS CONFIGURATION
-app.use(cors());
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); /* https://viandaexpress.vercel.app, http://localhost:5173 */
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-  next();
-});
+const allowedOrigins = [
+  process.env.ALLOWED_ORIGINS, // Tu frontend en producción
+  'http://localhost:5173'             // Desarrollo local
+].filter(Boolean);
+app.use(cors({
+  origin: function (origin, callback) {
+    // Permite peticiones sin origen (ej. curl, postman) o si el origen está en la lista blanca
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
+}));
 
 // MIDDLEWARE TO THE ROUTER
 app.use("/", router);

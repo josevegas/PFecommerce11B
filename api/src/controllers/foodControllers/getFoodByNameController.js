@@ -5,7 +5,6 @@ const getFoodByNameController = async (name) => {
   const foodByname = await Food.findAll({
     where: { status: true, name: { [Op.iLike]: `%${name}%` } },
   });
-
   return foodByname;
 };
 
