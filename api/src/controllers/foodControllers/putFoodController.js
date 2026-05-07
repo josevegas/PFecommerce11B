@@ -1,19 +1,14 @@
 const { Food } = require('../../db');
 const cloudinary = require('../../utils/cloudinary');
-
-const getPublicIdFromImageUrl = (imageUrl) => {
-  // Expresión regular para extraer el public ID de la URL
-  const regex = /\/([^/]+)\.[^.]+$/;
-  const match = imageUrl.match(regex);
-  return match ? match[1] : null;
-};
+const { getPublicIdFromImageUrl } = require('../../utils/imageUtils');
 
 const putFoodController = async (id, data) => {
   let foodToUpdate = await Food.findByPk(id);
   if (!foodToUpdate) throw new Error("Producto no encontrado")
   if (data.image) {
     if (foodToUpdate.image?.includes('cloudinary.com')) {
-      await cloudinary.uploader.destroy(getPublicIdFromImageUrl(foodToUpdate.image));
+      const publicId = getPublicIdFromImageUrl(foodToUpdate.image)
+      await cloudinary.uploader.destroy(publicId);
     }
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
@@ -31,7 +26,5 @@ const putFoodController = async (id, data) => {
   await foodToUpdate.update(data);
   return foodToUpdate;
 };
-
-
 
 module.exports = { putFoodController };

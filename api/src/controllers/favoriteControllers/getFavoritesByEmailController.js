@@ -2,21 +2,16 @@ const { User, Food } = require("../../db");
 
 const getFavoritesByEmailController = async (email) => {
     const favoritesByEmailRaw = await User.findOne({
-        where: { 
-            email: email
-        },
+        where: { email },
         attributes: [],
         include: [{
             model: Food,
-            through: {
-                attributes: []
-            }
+            through: { attributes: [] },
+            where: { status: true }
         }]
     });
-    
-    const favoritesByEmailClean = favoritesByEmailRaw.Food;  
-    return favoritesByEmailClean; 
 
+    return favoritesByEmailRaw ? favoritesByEmailRaw.Food : [];
 };
 
 module.exports = { getFavoritesByEmailController }
