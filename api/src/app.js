@@ -37,9 +37,9 @@ app.use("/", router);
 app.use((err, req, res, next) => {
   /* ?? */
   const status = err.status || 500;
-  const message = err.message || err;
-  console.error(err);
-  res.status(status).send(message);
+  const message = err.message || 'Error interno del servidor';
+  console.error(`[Error] ${req.method} ${req.url} - ${message}`);
+  res.status(status).json({ error: true, message: message });
 });
 
 // EXPORTS

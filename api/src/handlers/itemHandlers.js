@@ -1,14 +1,8 @@
-const {
-  postItemController,
-} = require("../controllers/itemControllers/postItemController");
-const {
-  putItemController,
-} = require("../controllers/itemControllers/putItemController");
-const {
-  deleteItemController,
-} = require("../controllers/itemControllers/deleteItemController");
+const { postItemController } = require("../controllers/itemControllers/postItemController");
+const { putItemController } = require("../controllers/itemControllers/putItemController");
+const { deleteItemController } = require("../controllers/itemControllers/deleteItemController");
 
-const postItemHandler = async (req, res) => {
+const postItemHandler = async (req, res, next) => {
   try {
     const { FoodId, OrderId, final_price, quantity, amount } = req.body;
     const setItem = await postItemController(
@@ -18,39 +12,30 @@ const postItemHandler = async (req, res) => {
       quantity,
       amount
     );
-    // const { userEmail, FoodId, quantity, final_price } = req.body;
-
-    // const addItem = await postItemController(
-    //   userEmail,
-    //   FoodId,
-    //   quantity,
-    //   final_price
-    // );
-    res.status(200).send(setItem);
+    res.status(200).json(setItem);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 
-const deleteItemHandler = async (req, res) => {
+const deleteItemHandler = async (req, res, next) => {
+  const { id } = req.params;
+  const { OrderId } = req.body;
   try {
-    const {id}=req.params;
-    const { OrderId } = req.body;
-    await deleteItemController(id,OrderId);
-    res.status(200).send("Se eliminó con éxito");
+    await deleteItemController(id, OrderId);
+    res.status(200).json({ message: "Se eliminó con éxito" });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 
-const putItemHandler = async (req, res) => {
+const putItemHandler = async (req, res, next) => {
+  const { orderId, itemId, quantity, amount } = req.body;
   try {
-    // const { itemId } = req.params;
-    const { orderId, itemId, quantity, amount } = req.body;
     const response = await putItemController(orderId, itemId, quantity, amount);
-    res.status(200).send(response);
+    res.status(200).json(response);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 

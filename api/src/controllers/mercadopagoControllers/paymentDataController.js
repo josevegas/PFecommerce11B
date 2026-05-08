@@ -1,47 +1,52 @@
 const axios = require("axios");
-const {
-  putOrderController,
-} = require("../orderControllers/putOrderController");
+const { putOrderController } = require("../orderControllers/putOrderController");
 
+/**
+ * Fetches payment data from MercadoPago and updates the corresponding order.
+ * @param {string|number} paymentId - The payment ID from MercadoPago.
+ */
 const paymentDataController = async (paymentId) => {
-  const accessToken =
-    "TEST-5452904587884616-070811-5c5f10c51ac99fe1580a358884ccd136-1412025676";
-  // const accessToken = "TEST-1886874462186522-070719-46a98fd793c6106a90381621123abc1d-1417316603";
+  if (!paymentId) throw new Error("Missing paymentId");
+
+  const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN || "TEST-5452904587884616-070811-5c5f10c51ac99fe1580a358884ccd136-1412025676";
 
   try {
-    const url = `https://api.mercadopago.com/v1/payments/${paymentId}?access_token=${accessToken}`;
+    const url = `https://api.mercadopago.com/v1/payments/${paymentId}`;
+    
+    const { data } = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
 
-    const { data } = await axios.get(url);
-    const relatedOrderId = data.metadata.related_order_id;
-    const paymentStatus = data.status;
-    const paymentStatusDetail = data.status_detail;
-    const paymentDate = data.date_approved;
+    const relatedOrderId = data.metadata?.related_order_id;
+    if (!relatedOrderId) {
+      console.warn(`No related order ID found for payment ${paymentId}`);
+      return;
+    }
 
-    let paymentStatusToDb = "";
-
-    if (paymentStatus === "approved") {
-      paymentStatusToDb = "APROBADO"
+    const statusMapping = {
+      approved: "APROBADO",
+      rejected: "RECHAZADO",
+      in_process: "EN PROCESO",
+      pending: "PENDIENTE",
+      cancelled: "CANCELADO"
     };
 
-    if (paymentStatus === "rejected") {
-      paymentStatusToDb = "RECHAZADO"
-    };
-
-    if (paymentStatus === "in_process") {
-      paymentStatusToDb = "EN PROCESO"
-    };
-
-
+    const paymentStatusToDb = statusMapping[data.status] || "PENDIENTE";
 
     await putOrderController({
       orderId: relatedOrderId,
       status: paymentStatusToDb,
-      payment_status_detail: paymentStatusDetail || null,
-      payment_id: paymentId || null,
-      payment_date: paymentDate || null,
+      payment_status_detail: data.status_detail || null,
+      payment_id: paymentId,
+      payment_date: data.date_approved || null,
     });
+
+    return { success: true, orderId: relatedOrderId, status: paymentStatusToDb };
   } catch (error) {
-    console.log(error);
+    console.error(`Error processing payment data for ID ${paymentId}:`, error.message);
+    throw new Error(`Failed to process payment data: ${error.message}`);
   }
 };
 

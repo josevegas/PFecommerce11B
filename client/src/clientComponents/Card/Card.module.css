@@ -1,132 +1,162 @@
 .card {
-  width: 250px;
-  height: 340px;
-  border-radius: 24px;
-  background-color: white;
-  box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.25);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: var(--transition);
   display: flex;
   flex-direction: column;
-  text-align: center;
-  /*margin: 5px;*/
-  margin: 10px 20px 10px 20px;
+  height: 100%;
+  border: 1px solid #f0f0f0;
+  position: relative;
 }
 
-.NavLink {
-  text-decoration: none;
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-light);
 }
 
 .imageAndLikeContainer {
   position: relative;
-  display: inline-block;
+  width: 100%;
+  aspect-ratio: 16/10;
+  height: 200px; /* Fallback height */
+  overflow: hidden;
+}
+
+.card_img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .card_img {
+  transform: scale(1.1);
 }
 
 .star {
   position: absolute;
-  top: 0;
-  left: 0;
-  font-size: 30px;
-  background-color: var(--accentColor);
-  width: 50px;
-  height: 50px; 
-  border-radius: 23px 0px 23px 0px;
-  padding: 5px;
+  top: 15px;
+  left: 15px;
+  background: var(--accent);
+  color: var(--dark);
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.card_img {
-  width: 230px;
-  margin-top: 10px;
-  border-radius: 24px;
-  height: 140px;
+.dataContainer {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.card_img:hover {
-  box-shadow: 0 0 25px var(--accentColor);
-}
-
-.card h2 {
-  font-size: 15px;
-  font-weight: bold;
-  color: black;
-  height: 40px;
-  margin: 15px;
+.dataContainer h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.3;
 }
 
 .categoryAndDiets {
   display: flex;
-  margin: 20px;
-  justify-content: space-between;
-  text-align: center;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .categoryIcon, .dietsIcon {
-  width:35px;
-  height:30px;
-}
-
-
-.shopping{
-  width: 29px;
-  height: 24px;
-  margin: 0px;
-}
-
-.btncar{
-  background-color: var(--accentColor);
-  border-radius: 0px 0px 22px 22px;
-  padding-left: 0px;
-  width: 269px;
-  border: none;
-  color: white;
-  
-}
-
-.btncar:hover{
-  background-color: var(--accentColor2);
-  transition: 0.5s;
-}
-
-.detailinput{
-  width: 60px;
-  height: 22px;
-  border-radius: 0px 0px 10px 0px;
-  border: none;
-  text-align: center;
+  height: 20px;
+  width: auto;
+  opacity: 0.8;
 }
 
 .priceContainer {
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  height: 39px;
+  gap: 10px;
+  margin-top: auto;
 }
 
-.normalPrice {
-  font-size: 19px;
-  font-weight: bold;
-  color: var(--accentColor);
+.normalPrice, .currentPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
 }
 
 .previousPrice {
+  font-size: 1rem;
   text-decoration: line-through;
-  font-size: 15px;
-  color: red;
+  color: var(--text-muted);
 }
 
 .discount {
-  font-size: 25px;
-  color: red;
-
+  background-color: var(--secondary);
+  color: var(--white);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
-.currentPrice {
-  font-size: 23px;
-  font-weight: bold;
-  color: var(--accentColor);
+.NavLink {
+  display: block;
+  width: 100%;
 }
 
-.inputagregar{
+.inputagregar {
+  padding: 0 20px 20px 20px;
   display: flex;
-  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }
 
+.btncar {
+  flex: 1;
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 10px 15px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+}
 
+.btncar:hover {
+  background-color: var(--primary-dark);
+}
+
+.detailinput {
+  width: 60px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #ddd;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.detailinput:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+@media screen and (max-width: 480px) {
+  .dataContainer h2 {
+    font-size: 1.1rem;
+  }
+  
+  .normalPrice, .currentPrice {
+    font-size: 1.2rem;
+  }
+}

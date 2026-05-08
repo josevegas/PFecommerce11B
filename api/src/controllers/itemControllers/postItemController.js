@@ -1,23 +1,5 @@
-const { Item, Order, User } = require("../../db");
+const { Item, sequelize } = require("../../db");
 const { updateCartTotalPrice } = require("./updateCartTotalPrice");
-
-// const postItemController = async (userEmail, FoodId, quantity, final_price) => {
-//   // Buscar el carrito del usuario con estado "PENDIENTE"
-//   try {
-//     const itemAmount = final_price * quantity;
-
-//     const user = await User.findOne({
-//       where: {
-//         email: userEmail,
-//       },
-//     });
-
-//     const userOrder = await Order.findOne({
-//       where: {
-//         UserId: user.dataValues.id,
-//         status: "PENDIENTE",
-//       },
-//     });
 const postItemController = async (
   FoodId,
   OrderId,
@@ -25,6 +7,8 @@ const postItemController = async (
   quantity,
   amount
 ) => {
+  //Generamos índice de transacción para mantener la integridad referencial
+  const t = await sequelize.transaction();
   // Crear el nuevo artículo y asociarlo al carrito
   try {
     const newItem = await Item.create({
@@ -33,13 +17,14 @@ const postItemController = async (
       final_price,
       quantity,
       amount,
-    });
+    }, { transaction: t });
 
-    await updateCartTotalPrice(OrderId);
-
+    await updateCartTotalPrice(OrderId, t);
+    await t.commit();
     return newItem;
   } catch (error) {
-    console.log(error);
+    await t.rollback(); //Deshace la operación si ocurre un error
+    throw error; //Relanza el error
   }
 };
 

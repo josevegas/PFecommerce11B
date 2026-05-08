@@ -170,57 +170,79 @@ export default function Detail() {
             <img
               className={styles.image}
               src={foodDetail?.image}
-              alt="img not found"
+              alt={foodDetail?.name}
             />
             <p className={styles.description}>{foodDetail?.description}</p>
           </div>
           <div className={styles.container2}>
-            <h2 className={styles.caract}>Características Principales</h2>
-            <p className={styles.price}>Precio: ${foodDetail?.final_price}</p>
-            <p className={styles.category}>Categoría: {foodDetail?.category}</p>
-            <p className={styles.diets}>
-              Dietas:{" "}
-              {!foodDetail?.diets.length ? (
-                <span>Esta vianda no sigue ninguna dieta específica</span>
-              ) : (
-                foodDetail?.diets.map((plaftorm, index) => {
-                  return foodDetail?.diets.length - 1 === index ? (
-                    <span key={index}>{plaftorm}</span>
-                  ) : (
-                    <span key={index}>{`${plaftorm} | `}</span>
-                  );
-                })
-              )}
-            </p>
+            <h2 className={styles.caract}>Detalles del Producto</h2>
+            
+            <div className={styles.priceContainer}>
+              <span className={styles.priceValue}>${foodDetail?.final_price}</span>
+            </div>
+
+            <div className={styles.category}>
+              Categoría: <span>{foodDetail?.category}</span>
+            </div>
+
+            <div className={styles.diets}>
+              Dietas: 
+              <div>
+                {!foodDetail?.diets.length ? (
+                  <span>General</span>
+                ) : (
+                  foodDetail?.diets.map((diet, index) => (
+                    <span key={index}>{index > 0 ? ` | ${diet}` : diet}</span>
+                  ))
+                )}
+              </div>
+            </div>
 
             {!foodDetail?.status && (
-              <p className={styles.status}>Estado: no disponible</p>
+              <div className={styles.status}>Estado: <span>No disponible temporalmente</span></div>
             )}
 
             {foodDetail?.total_score > 4 && (
-              <p className={styles.popular}>
-                ⭐️ Mejor rankeado! Ésta es una de las viandas con mayor
-                valoración por parte de los usuarios.
-              </p>
+              <div className={styles.popular}>
+                ⭐️ Mejor rankeado! Esta vianda es de las favoritas.
+              </div>
             )}
-            {isItem ? (
-              <input
-                className={styles.detailinput}
-                type="number"
-                min="1"
-                value={quantity}
-                onChange={updateQuantity}
-              />
-            ) : null}
-            <button className={styles.addButton} onClick={handleClick}>
-              {isItem ? (
-                "Agregado"
-              ) : (
-                <p>
-                  <FontAwesomeIcon icon={faCartShopping} /> Agregar
-                </p>
+
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '20px' }}>
+              {isItem && (
+                <input
+                  className={styles.detailinput}
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={updateQuantity}
+                />
               )}
-            </button>
+              <button 
+                className={styles.addButton} 
+                onClick={handleClick}
+                style={{
+                  backgroundColor: isItem ? 'var(--primary-dark)' : 'var(--primary)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-sm)',
+                  color: 'white',
+                  padding: '12px 24px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  transition: 'var(--transition)',
+                  flexGrow: 1
+                }}
+              >
+                {isItem ? (
+                  "Agregado al Carrito"
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faCartShopping} /> Agregar al Carrito
+                  </>
+                )}
+              </button>
+            </div>
 
             <GoBackHome />
           </div>

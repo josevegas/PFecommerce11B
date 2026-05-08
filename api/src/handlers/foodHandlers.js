@@ -6,73 +6,60 @@ const { putFoodController } = require('../controllers/foodControllers/putFoodCon
 const { getAdminFoodController } = require('../controllers/foodControllers/getAdminFoodsController');
 
 
-const getFoodHandler = async (req, res) => {
+const getFoodHandler = async (req, res, next) => {
     const { name } = req.query;
     try {
-        if (name) {
-            const foodByName = await getFoodByNameController(name);
-            res.status(200).send(foodByName);
-        } else {
-            const allFood = await getAllFoodController();
-            res.status(200).send(allFood);
-        }
+        const response = name ? await getFoodByNameController(name) : await getAllFoodController();
+        res.status(200).json(response);
     } catch (error) {
-        res.status(400).send({ error: error.message });
+        next(error);
     }
 };
 
-const getAdminFoodHandler = async (req, res) => {
+const postFoodHandler = async (req, res, next) => {
+    const { description, name, initial_price, discount, diets, category, total_score } = req.body;
+    const image = req.file ? req.file.buffer : null;
+    try {
+        if (!name || !initial_price || !image) throw new Error('Faltan campos obligatorios');
+        const finalPrice = Math.ceil(initial_price * (1 - (discount / 100)));
+        const newFood = await postFoodController(name, image, description, category, initial_price, discount, finalPrice, total_score, diet);
+        res.status(200).json(newFood);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+const putFoodHandler = async (req, res, next) => {
+    const { id } = req.params;
+    const image = req.file ? req.file.buffer : null;
+    try {
+        //body mejorado
+        const updated = await putFoodController(id, { ...req.body, image });
+        res.status(200).json({ message: "Modificacion exitosa", updated });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const deleteFoodHandler = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        await deleteFoodController(id);
+        res.status(200).json({ message: "Se eliminó con éxito" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getAdminFoodHandler = async (req, res, next) => {
     try {
         const allFood = await getAdminFoodController();
-        res.status(200).send(allFood);
+        res.status(200).json(allFood);
     } catch (error) {
-        res.status(400).send({ error: error.message });
+        next(error);
     }
 };
-
-const postFoodHandler = async (req, res) => {
-    const { description, name, initial_price, discount, diets, category } = req.body;
-    const image = req.file.buffer;
-    const final_price = Math.ceil(initial_price * (1 - (discount / 100)));
-    // convierto en array 'diets' que llega como string
-    const diet = diets.split(',');
-    const total_score = 0;
-    try {
-        if (description && name && image && initial_price && discount && final_price && category && diet) {
-            const newFood = await postFoodController(name, image, description, category, initial_price, discount, final_price, total_score, diet);
-            res.status(200).send(newFood);
-        } else {
-            throw new Error('Falta información en el cuerpo de la solicitud o la imagen no es válida');
-        }
-    } catch (error) {
-        res.status(400).send({ error: error.message });
-    }
-};
-
-
-const putFoodHandler = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, diet, description, initial_price, discount, status, category } = req.body;
-        const final_price = initial_price ? Math.ceil(initial_price * (1 - (discount / 100))) : undefined;
-        const image = req.file ? req.file.buffer : null;
-        await putFoodController(id, name, diet, description, image, initial_price, discount, final_price, status, category);
-        res.status(200).send('Modificacion exitosa');
-    } catch (error) {
-        res.status(400).send({ error: error.message });
-    }
-};
-
-const deleteFoodHandler = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await deleteFoodController(id);
-        res.status(200).send("Se eliminó con éxito");
-    } catch (error) {
-        res.status(400).send({ error: error.message });
-    }
-};
-
 
 
 module.exports = { getFoodHandler, postFoodHandler, putFoodHandler, deleteFoodHandler, getAdminFoodHandler };

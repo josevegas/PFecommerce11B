@@ -2,23 +2,31 @@ const { User } = require("../../db");
 const sendEmailWelcome = require("../../nodemailer/SendEmailWelcome/sendEmail.js");
 
 const postUserController = async (name, email, type, status, address) => {
-  let newUser = {};
-  if (email === "viandaexpress84@gmail.com" || email === "dvoskingaston@gmail.com" || email === "gabriel.682681@gmail.com" || email === "silviojuarez60@gmail.com") {
-    type = "Admin";
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",");
+
+  // Determinamos el rol
+  let userRole = type;
+  if (ADMIN_EMAILS.includes(email)) {
+    userRole = "Admin";
   }
 
-  if (type === "guest") {
-    newUser = await User.create({ name, email, type, status, address });
-  } else {
-    const userByEmail = await User.findAll({
-      where: { email: email },
-    });
-    if (!userByEmail.length) {
-      newUser = await User.create({ name, email, type, status, address });
-      await sendEmailWelcome(email);
-    }
+  //findOrCreate es más eficiente y evita condiciones de carrera
+  const [user, created] = await User.findOrCreate({
+    where: { email },
+    defaults: { name, email, type: userRole, status, address }
+  });
+
+  // Si el usuario ya existía, actualizamos sus datos (opcional)
+  if (!created) {
+    await user.update({ name, email, type: userRole, status, address });
   }
-  return newUser.dataValues;
+
+  // Solo enviar email de bienvenida si es un usuario nuevo
+  if (created && userRole !== "Admin") {
+    await sendEmailWelcome(email);
+  }
+
+  return user;
 };
 
 module.exports = { postUserController };

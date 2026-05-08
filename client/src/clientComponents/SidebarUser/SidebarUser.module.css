@@ -1,37 +1,73 @@
-.bodys {
-  margin: 0;
-  padding: 0;
-  display: flex;
-}
-
 .container {
-  height: 100vh;
-  background-color: var(--accentColor);
+  background-color: var(--white);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.02);
 }
 
 .sidebar {
-  height: auto;
-  width: 100%;
-  padding: 0%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.sidebar .row {
+.row {
   width: 100%;
-  height: 50px;
-  border: 1px solid black;
+  transition: var(--transition);
   display: flex;
-  flex-direction: row;
-  color: white;
-  list-style-type: none;
-  justify-content: center;
   align-items: center;
-}
-.sidebar.row:hover {
-  cursor: pointer;
-  background-color: var(--accentColor2);
 }
 
 .links {
+  width: 100%;
+  padding: 16px 30px;
   text-decoration: none;
-  color: white;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: var(--transition);
+  border-left: 4px solid transparent;
+}
+
+.links:hover {
+  background-color: #f9fbf7;
+  color: var(--primary);
+  border-left-color: var(--primary-light);
+}
+
+/* active state styling would be great if we used NavLink */
+/* .linksActive {
+  background-color: var(--primary-light);
+  color: var(--white);
+  border-left-color: var(--primary-dark);
+} */
+
+@media (max-width: 992px) {
+  .container {
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 20px 0;
+  }
+  
+  .sidebar {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .links {
+    padding: 12px 20px;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+  }
+  
+  .links:hover {
+    border-bottom-color: var(--primary-light);
+  }
 }

@@ -1,20 +1,31 @@
 const { Order, User } = require("../../db");
-// Este controller es innecesaria por el momento se podria eliminar, ya que postOrderController es la que se esta usando  para hacer lo mismo practicamente
+
+/**
+ * Retrieves the ID of a pending order for a specific user email.
+ * @param {string} userEmail - The email of the user.
+ * @returns {Promise<string|number|null>} - The pending order ID or null.
+ */
 const getPendingOrderByUserEmailController = async (userEmail) => {
-  const user = await User.findOne({
-    where: {
-      email: userEmail,
-    },
-  });
+  if (!userEmail) throw new Error("userEmail is required");
 
-  const userOrder = await Order.findOne({
-    where: {
-      UserId: user.dataValues.id,
-      status: "PENDIENTE",
-    },
-  });
+  try {
+    const user = await User.findOne({ where: { email: userEmail } });
+    if (!user) {
+      throw new Error(`User with email ${userEmail} not found`);
+    }
 
-  return userOrder.dataValues.id;
+    const userOrder = await Order.findOne({
+      where: {
+        UserId: user.id,
+        status: "PENDIENTE",
+      },
+    });
+
+    return userOrder ? userOrder.id : null;
+  } catch (error) {
+    console.error(`Error in getPendingOrderByUserEmailController for ${userEmail}:`, error.message);
+    throw new Error(error.message || "Failed to retrieve pending order ID");
+  }
 };
 
 module.exports = { getPendingOrderByUserEmailController };

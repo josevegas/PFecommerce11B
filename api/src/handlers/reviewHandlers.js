@@ -3,40 +3,44 @@ const { getReviewByIdController } = require("../controllers/reviewControllers/ge
 const { postReviewController } = require("../controllers/reviewControllers/postReviewController");
 const { putReviewController } = require("../controllers/reviewControllers/putReviewController");
 
-const getReviewsHandler = async (req, res) => { 
-    try {
-        const {id} = req.body
-        if (id) {
-            const review = await getReviewByIdController(id);
-            res.status(200).send(review);
-        } else {
-            const allReviews = await getAllReviewsController();
-            res.status(200).send(allReviews);
-        }
-    } catch (error) {
-        res.status(400).send({ error: error.message });
+// Handles fetching all reviews or a specific one by ID
+const getReviewsHandler = async (req, res, next) => {
+  const { id } = req.query; // Changed from body to query for GET requests usually
+  try {
+    if (id) {
+      const review = await getReviewByIdController(id);
+      return res.status(200).json(review);
     }
-  };
+    const allReviews = await getAllReviewsController();
+    res.status(200).json(allReviews);
+  } catch (error) {
+    next(error);
+  }
+};
 
-  const putReviewHandler = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updatedReview = await putReviewController(id);
-        res.status(200).send(updatedReview);
-    } catch (error) {
-        res.status(400).send({ error: error.message });
-    }
-  };
+const putReviewHandler = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    if (!id) throw new Error("Review ID is required");
+    const updatedReview = await putReviewController(id, req.body);
+    res.status(200).json({ message: "Reseña actualizada", updatedReview });
+  } catch (error) {
+    next(error);
+  }
+};
 
-  const postReviewHandler = async (req, res) => {
-    try {
-        const {foodId, userId, comment , rating,itemId} = req.body;
-        const newReview = await postReviewController(foodId,userId,comment,rating,itemId);
-        res.status(200).send(newReview)
-    } catch (error) {
-        res.status(400).send({ error: error.message });
-    }
-  };
+const postReviewHandler = async (req, res, next) => {
+  const { foodId, userId, comment, rating, itemId } = req.body;
+  try {
+    // Basic validation in handler
+    if (!foodId || !userId || !itemId) throw new Error("Missing required IDs (foodId, userId, itemId)");
+    if (rating === undefined) throw new Error("Rating is required");
 
+    const newReview = await postReviewController(foodId, userId, comment, rating, itemId);
+    res.status(201).json(newReview);
+  } catch (error) {
+    next(error);
+  }
+};
 
-module.exports = {getReviewsHandler,putReviewHandler,postReviewHandler}
+module.exports = { getReviewsHandler, putReviewHandler, postReviewHandler };

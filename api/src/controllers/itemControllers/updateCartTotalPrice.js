@@ -1,42 +1,22 @@
 const { Item, Order } = require("../../db");
 
-const updateCartTotalPrice = async (orderId) => {
-  const itemsByOrderId = await Item.findAll({
+const updateCartTotalPrice = async (orderId, t) => {//Acepta una transacción 't'
+  // Sumamos todos los 'amount' directamente en la base de datos
+  const totalPrice = await Item.sum('amount', {
     where: {
       OrderId: orderId,
     },
-  });
-
-  if (itemsByOrderId.length) {
-    const orderById = await Order.findByPk(orderId, {
-      include: {
-        model: Item,
-        attributes: ["amount"],
+    transaction: t,
+  }) || 0;
+  await Order.update(
+    { total_price: totalPrice },
+    {
+      where: {
+        id: orderId,
       },
-    });
-
-    const total_price = orderById.Items.reduce((total, item) => {
-      return total + item.amount;
-    }, 0);
-
-    await Order.update(
-      { total_price },
-      {
-        where: {
-          id: orderId,
-        },
-      }
-    );
-  } else {
-    await Order.update(
-      { total_price: 0 },
-      {
-        where: {
-          id: orderId,
-        },
-      }
-    );
-  }
+      transaction: t,
+    }
+  );
 };
 
 module.exports = { updateCartTotalPrice };

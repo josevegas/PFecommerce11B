@@ -11,6 +11,5 @@ const userRouter = Router();
 userRouter.get("/", getUserHandler);
 userRouter.post("/", postUserHandler);
 userRouter.put("/:email", putUserHandler);
-userRouter.put("/address", putAddressHandler)
 
 module.exports = { userRouter };

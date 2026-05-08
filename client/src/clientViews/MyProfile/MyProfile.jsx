@@ -117,17 +117,21 @@ const MyProfile = () => {
               />
             </div>
 
-            <button className={styles.editButton} type="button" onClick={handleEdit}>
-              EDITAR DOMICILIO
-            </button>
+            <div className={styles.buttonGroup}>
+              <button className={styles.editButton} type="button" onClick={handleEdit}>
+                {editableField ? "CANCELAR" : "EDITAR DOMICILIO"}
+              </button>
 
-            <button
-              className={styles.saveButton}
-              type="button"
-              onClick={handleSave}
-            >
-              GUARDAR
-            </button>
+              {editableField && (
+                <button
+                  className={styles.saveButton}
+                  type="button"
+                  onClick={handleSave}
+                >
+                  GUARDAR CAMBIOS
+                </button>
+              )}
+            </div>
           </div>
         </section>
       </div>

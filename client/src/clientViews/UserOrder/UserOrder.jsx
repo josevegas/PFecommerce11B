@@ -22,38 +22,42 @@ const UserOrder = () => {
   }, [dispatch]);
 
   return (
-    <div className={styles.divuser}>
+    <div className={styles.mainContainer}>
       <SidebarUser />
-      <section className={styles.content}>
-        <h1>Mis órdenes</h1>
-        <table className={styles.destable}>
-          <thead>
-            <tr>
-              <th>Número de orden</th>
-              <th>Precio Total</th>
-              <th>Fecha</th>
-              <th>Estado</th>
-              <th>Detalle</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orderUser.map((o) => (
-              <tr key={o.id}>
-                <td>{o.id}</td>
-                <td>{o.total_price}</td>
-                <td>{`${new Date(o.createdAt).getDate()}/${
-                  new Date(o.createdAt).getMonth() + 1
-                }/${new Date(o.createdAt).getFullYear()}`}</td>
-                <td>{o.order_status || "Procesando"}</td>
-                <td>
-                  <Link to={`/micuenta/misordenes/detalle/${o.id}`}>
-                    <button>Ver</button>
-                  </Link>
-                </td>
+      <section className={styles.contentContainer}>
+        <h1>Mis Órdenes</h1>
+        <div className={styles.tableWrapper}>
+          <table className={styles.destable}>
+            <thead>
+              <tr>
+                <th>Número de orden</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acción</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {orderUser.map((o) => (
+                <tr key={o.id}>
+                  <td><code style={{ fontSize: '0.8rem', color: '#666' }}>{o.id.substring(0, 8)}...</code></td>
+                  <td style={{ fontWeight: '600' }}>${o.total_price}</td>
+                  <td>{new Date(o.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <span className={`${styles.statusBadge} ${styles[`status-${o.order_status}`] || styles['status-PENDIENTE']}`}>
+                      {o.order_status || "PENDIENTE"}
+                    </span>
+                  </td>
+                  <td>
+                    <Link to={`/micuenta/misordenes/detalle/${o.id}`} className={styles.viewButton}>
+                      Ver Detalle
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   );

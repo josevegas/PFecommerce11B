@@ -1,36 +1,47 @@
 .mainContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  margin: 0 auto;
-  max-width: 1200px;
+  padding: 40px 5%;
+  background: var(--bg-app);
+  min-height: 100vh;
+  gap: 40px;
 }
 
 .categoriesAndFiltersAndOrder {
+  width: 100%;
+  max-width: 1200px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--white);
+  padding: 30px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
 }
 
 .filters {
   display: flex;
-  flex-direction: column;
+  gap: 20px;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  margin-left: 30px;
 }
 
 .notFoundMessage {
-  color: var(--alertColor);
-  margin-top: 20px;
-  font-weight: bold;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  margin-top: 50px;
+  font-weight: 500;
 }
 
-@media screen and (max-width: 780px){
+@media screen and (max-width: 768px) {
   .categoriesAndFiltersAndOrder {
-    flex-direction: column;
+    padding: 20px;
   }
+  
   .filters {
-    flex-direction: row;
+    flex-direction: column;
+    width: 100%;
   }
 }

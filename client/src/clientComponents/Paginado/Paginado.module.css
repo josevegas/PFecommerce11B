@@ -1,42 +1,75 @@
 .foodList {
-    list-style-type: none;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.numbersInactive{
-    background-color: white;
-    font-size: 15px;
-    margin-right: 5px;
-    border-radius: 100%;
-    width: 40px;
-    height: 40px;
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 0;
 }
 
-.numbersInactive:hover{
-    border: solid 3px var(--accentColor);
+.numbersInactive {
+  background-color: var(--white);
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 500;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #eee;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-.numbersActive{
-    background-color: var(--accentColor);
-    font-size: 15px;
-    margin-right: 5px;
-    border-radius: 100%;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border: solid 3px white;
+.numbersInactive:hover {
+  border-color: var(--primary-light);
+  color: var(--primary);
+  background-color: #f9fbf7;
+  transform: translateY(-2px);
+}
+
+.numbersActive {
+  background-color: var(--primary);
+  color: var(--white);
+  font-size: 1rem;
+  font-weight: 700;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 4px 15px rgba(66, 107, 31, 0.3);
+  cursor: default;
 }
 
 .previousAndNext {
-    background-color: white;
-    font-size: 15px;
-    margin: 10px;
-    border-radius: 100%;
-    width: 25px;
-    height: 25px;
+  background-color: var(--white);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #eee;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
 .previousAndNext:hover {
-    border: solid 2px var(--accentColor);
+  border-color: var(--primary-light);
+  color: var(--primary);
+  background-color: #f9fbf7;
+}
+
+.previousAndNext:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: #eee;
 }

@@ -415,7 +415,7 @@ const foods = [
     description:
       "Un clásico corte de carne asada a la parrilla al estilo argentino, tierno y lleno de sabor.",
     image:
-      "https://saboryestilo.com.mx/wp-content/uploads/2020/05/parrilla-argentina-1.jpg",
+      "https://i.pinimg.com/736x/af/dd/95/afdd955d2b6ce39a75eafbb920752705.jpg",
     initial_price: 2600,
     discount: 0,
     final_price: 2600,
@@ -665,7 +665,7 @@ const foods = [
     description:
       "Una ensalada Caprese clásica con tomates frescos, mozzarella de búfala, hojas de albahaca y aceite de oliva.",
     image:
-      "https://www.comedera.com/wp-content/uploads/2017/07/ensalada-caprese.jpg",
+      "https://cdn.blog.paulinacocina.net/wp-content/uploads/2024/07/ensalada-caprese-italiana-800x534.jpg",
     initial_price: 1950,
     discount: 0,
     final_price: 1950,

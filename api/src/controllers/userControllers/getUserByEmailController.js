@@ -1,12 +1,12 @@
 const { User } = require("../../db");
 
 const getUserByEmailController = async (email) => {
-  const userByEmail = await User.findAll({
+  const userByEmail = await User.findOne({
     where: {
-      email: email
+      email
     }
   });
-  return userByEmail;
+  return userByEmail || null;
 };
 
 module.exports = { getUserByEmailController };

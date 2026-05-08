@@ -1,30 +1,24 @@
-const { Item, User, Order } = require("../../db");
+const { Item, sequelize } = require("../../db");
 const { updateCartTotalPrice } = require("./updateCartTotalPrice");
 
 const deleteItemController = async (id, OrderId) => {
+  const t = await sequelize.transaction();
   try {
-    // const user = await User.findOne({
-    //   where: {
-    //     email: userEmail,
-    //   },
-    // });
-
-    // const userOrder = await Order.findOne({
-    //   where: {
-    //     UserId: user.dataValues.id,
-    //     status: "PENDIENTE",
-    //   },
-    // });
+    const itemToDelete = await Item.findByPk(id);
+    if (!itemToDelete) throw new Error('El ítem no existe');
 
     await Item.destroy({
       where: {
         id,
       },
-    });
+    }, { transaction: t });
 
-    await updateCartTotalPrice(OrderId);
+    await updateCartTotalPrice(OrderId, t);
+    await t.commit();
+    return 'El ítem se ha eliminado correctamente';
   } catch (error) {
-    console.log(error);
+    await t.rollback();
+    throw error;
   }
 };
 

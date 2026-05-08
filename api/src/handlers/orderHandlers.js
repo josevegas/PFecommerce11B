@@ -1,123 +1,111 @@
-const {
-  getOrdersController,
-} = require("../controllers/orderControllers/getOrdersController");
-const {
-  postOrderController,
-} = require("../controllers/orderControllers/postOrderController");
-const {
-  putOrderController,
-} = require("../controllers/orderControllers/putOrderController");
-const {
-  getUserOrdersController,
-} = require("../controllers/orderControllers/getUserOrdersController");
-const {
-  getOrderDetailController,
-} = require("../controllers/orderControllers/getOrderDetailController");
-const {
-  getBestSellersController,
-} = require("../controllers/orderControllers/getBestSellersController");
-const {
-  getOrderByUserEmailController,
-} = require("../controllers/orderControllers/getOrderByUserEmailController");
-const {putPickupDateController,}=require("../controllers/orderControllers/putPickupDateController");
-const {
-  getOrderByIdsController
-} = require("../controllers/orderControllers/getOrderByIdsController");
+const { getOrdersController } = require("../controllers/orderControllers/getOrdersController");
+const { postOrderController } = require("../controllers/orderControllers/postOrderController");
+const { putOrderController } = require("../controllers/orderControllers/putOrderController");
+const { getUserOrdersController } = require("../controllers/orderControllers/getUserOrdersController");
+const { getOrderDetailController } = require("../controllers/orderControllers/getOrderDetailController");
+const { getBestSellersController } = require("../controllers/orderControllers/getBestSellersController");
+const { getOrderByUserEmailController } = require("../controllers/orderControllers/getOrderByUserEmailController");
+const { putPickupDateController } = require("../controllers/orderControllers/putPickupDateController");
+const { getOrderByIdsController } = require("../controllers/orderControllers/getOrderByIdsController");
 
-
-
-//Esta ruta trae todas las ordenes cerradas (sirve para el admin, se deebria modificar proximamente para traer los pedidos ya finalizados )
-const getOrdersHandler = async (req, res) => {
+// Retrieves all orders (typically for admin use)
+const getOrdersHandler = async (req, res, next) => {
   try {
     const allOrders = await getOrdersController();
-    res.status(200).send(allOrders);
+    res.status(200).json(allOrders);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 
-const getOrderByUserEmailHandler = async (req, res) => {
+const getOrderByUserEmailHandler = async (req, res, next) => {
+  const { userEmail } = req.params;
   try {
-    const { userEmail } = req.params;
+    if (!userEmail) throw new Error("User email is required");
     const orderByUserId = await getOrderByUserEmailController(userEmail);
-    res.status(200).send(orderByUserId);
+    res.status(200).json(orderByUserId);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
-// esta ruta trae el detalle de una order en especifico
-const getOrderDetailHandler = async (req, res) => {
+
+// Retrieves details for a specific order
+const getOrderDetailHandler = async (req, res, next) => {
+  const { orderId } = req.params;
   try {
-    const { orderId } = req.params;
+    if (!orderId) throw new Error("Order ID is required");
     const detail = await getOrderDetailController(orderId);
-    res.status(200).send(detail);
+    res.status(200).json(detail);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 
-//esta ruta trae el historial de orders de un usuario(sirve para el cliente,falta agregar condicion para que solo traiga las orders concretadas)
-const getUserOrdersHandler = async (req, res) => {
+// Retrieves order history for a specific user
+const getUserOrdersHandler = async (req, res, next) => {
+  const { userId } = req.params;
   try {
-    const { userId } = req.params;
-
-    // const { userId } = req.params
+    if (!userId) throw new Error("User ID is required");
     const openOrder = await getUserOrdersController(userId);
-    res.status(200).send(openOrder);
+    res.status(200).json(openOrder);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 
-const postOrderHandler = async (req, res) => {
+const postOrderHandler = async (req, res, next) => {
+  const { email } = req.body;
   try {
-    const { email } = req.body;
+    if (!email) throw new Error("Email is required in request body");
     const newOrder = await postOrderController(email);
-    res.status(200).send(newOrder);
+    res.status(200).json(newOrder);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 
-const putOrderHandler = async (req, res) => {
+const putOrderHandler = async (req, res, next) => {
+  const { orderId, order_status } = req.body;
   try {
-    const { orderId, order_status } = req.body;
-
+    if (!orderId) throw new Error("Order ID is required");
     await putOrderController({ orderId, order_status });
-    res.status(200).send("Orden modificada correctamente.");
+    res.status(200).json({ message: "Orden modificada correctamente." });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 
-const getBestSellersHandler = async (req, res) => {
+const getBestSellersHandler = async (req, res, next) => {
+  const quantity = parseInt(req.query.quantity, 10) || 5;
   try {
-    const quantity = parseInt(req.query.quantity, 10);
     const bestSellers = await getBestSellersController(quantity);
-    res.status(200).send(bestSellers);
+    res.status(200).json(bestSellers);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
 };
 
-const putPickupDateHandler= async (req,res)=>{
+const putPickupDateHandler = async (req, res, next) => {
+  const { orderId, pickup_date } = req.body;
   try {
-    const {orderId,pickup_date}=req.body;
-    await putPickupDateController({orderId,pickup_date})
+    if (!orderId || !pickup_date) throw new Error("Missing orderId or pickup_date");
+    await putPickupDateController({ orderId, pickupDate: pickup_date });
+    res.status(200).json({ message: "Fecha de retiro actualizada correctamente" });
   } catch (error) {
-    res.status(400).send({error:message})
+    next(error);
   }
-}
+};
 
-const getOrderByIdsHandler = async (req, res) => {
+const getOrderByIdsHandler = async (req, res, next) => {
+  const { paymentId } = req.params;
   try {
-    const { paymentId } = req.params;
+    if (!paymentId) throw new Error("Payment ID is required");
     const orderToRender = await getOrderByIdsController(paymentId);
-    res.status(200).send(orderToRender);
+    res.status(200).json(orderToRender);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    next(error);
   }
-}
+};
 
 module.exports = {
   getOrdersHandler,

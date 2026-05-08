@@ -25,15 +25,17 @@ function SearchBar() {
   }
 
   return (
-    <div>
+    <div className={styles.container}>
       <input
         className={styles.searchBar}
         type="text"
-        /* placeholder={`${magnifyingGlass} Buscar por nombre...`} */
-        placeholder=" 🔍 Buscar por nombre..."
+        placeholder="Buscar viandas..."
         onChange={(e) => handleInputChange(e)}
+        value={name}
       />
-      {/* <button className={styles.magnifyingGlass}>{magnifyingGlass}</button> */}
+      <span className={styles.magnifyingGlass}>
+        <FontAwesomeIcon icon={faMagnifyingGlass} />
+      </span>
     </div>
   );
 }

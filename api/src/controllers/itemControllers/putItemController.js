@@ -1,39 +1,26 @@
-const { Item, User, Order } = require("../../db");
+const { Item, sequelize } = require("../../db");
 const { updateCartTotalPrice } = require("./updateCartTotalPrice");
 
-  const putItemController = async (orderId, itemId, quantity, amount) => {
-    // const user = await User.findOne({
-    //   where: {
-    //     email: userEmail,
-    //   },
-    // });
-
-    // const userOrder = await Order.findOne({
-    //   where: {
-    //     UserId: user.dataValues.id,
-    //     status: "PENDIENTE",
-    //   },
-    // });
-
-    // const itemToBeModified = await Item.findOne({
-    //   where: {
-    //     FoodId,
-    //     OrderId,
-    //   },
-    // });
-
-    await Item.update(
+const putItemController = async (orderId, itemId, quantity, amount) => {
+  const t = await sequelize.transaction();
+  try {
+    const [uodatedRows] = await Item.update(
       { quantity, amount },
       {
         where: {
           id: itemId,
         },
+        transaction: t
       }
     );
-
-    await updateCartTotalPrice(orderId);
+    if (updatedRows === 0) throw new Error("Item no actualizado");
+    await updateCartTotalPrice(orderId, t);
+    await t.commit();
     return "Item actualizado correctamente";
-  };
-
+  } catch (error) {
+    await t.rollback();
+    throw error;
+  }
+};
 
 module.exports = { putItemController };

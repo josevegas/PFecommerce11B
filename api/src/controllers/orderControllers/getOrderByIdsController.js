@@ -1,20 +1,27 @@
 const { Order } = require("../../db");
 
+/**
+ * Retrieves an order by its payment ID.
+ * @param {string} paymentId - The payment ID from MercadoPago.
+ * @returns {Promise<Object>} - The order object.
+ */
 const getOrderByIdsController = async (paymentId) => {
-    try {
-        const order = await Order.findOne({
-            where: {
-                payment_id: paymentId,
-            },
-            // attributes: ['total_price', 'createdAt', 'status', 'UserId', 'id', 'payment_status_detail', 'order_status'],
-        });
+  if (!paymentId) throw new Error("paymentId is required");
 
-        return order;
-    } catch (error) {
+  try {
+    const order = await Order.findOne({
+      where: { payment_id: paymentId },
+    });
 
-        console.log("Error al buscar la orden:", error);
-        return null;
+    if (!order) {
+      throw new Error(`Order with payment ID ${paymentId} not found`);
     }
+
+    return order;
+  } catch (error) {
+    console.error(`Error in getOrderByIdsController for ID ${paymentId}:`, error.message);
+    throw new Error(error.message || "Failed to retrieve order by payment ID");
+  }
 };
 
 module.exports = { getOrderByIdsController };

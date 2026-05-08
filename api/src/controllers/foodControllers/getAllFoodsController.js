@@ -1,4 +1,4 @@
-const { Food } = require("../../db");
+const { Food, sequelize } = require("../../db");
 
 const getAllFoodController = async () => {
   // Filtramos desde la base de datos (más rápido y eficiente)

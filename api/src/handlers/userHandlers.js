@@ -3,59 +3,33 @@ const { getAllUsersController } = require('../controllers/userControllers/getAll
 const { postUserController } = require('../controllers/userControllers/postUserController');
 const { putUserController } = require('../controllers/userControllers/putUserController');
 
-
-
-
-
-
-const getUserHandler = async (req, res) => {
-
+const getUserHandler = async (req, res, next) => {
     const { email } = req.query;
     try {
-        if (email) {
-            const userByEmail = await getUserByEmailController(email);      /* ir returns null in case the email doesn't exist in the DB */
-            res.status(200).send(userByEmail);
-        } else {
-            const allUsers = await getAllUsersController();
-            res.status(200).send(allUsers);
-        }
+        const response = email ? await getUserByEmailController(email) : await getAllUsersController();
+        res.status(200).json(response);
     } catch (error) {
-        res.status(400).send({ error: error.message });
+        next(error);
     }
 };
 
-const postUserHandler = async (req, res) => {
-    const { name, email, type, status, address } = req.body;
+const postUserHandler = async (req, res, next) => {
     try {
-        const newUser = await postUserController(name, email, type, status, address);
-        res.status(201).send(newUser);
+        const newUser = await postUserController(req.body);
+        res.status(201).json(newUser);
     } catch (error) {
-        res.status(400).send({ error: error.message });
+        next(error);
     }
 };
 
-
-const putUserHandler = async (req, res) => {
+const putUserHandler = async (req, res, next) => {
+    const { email } = req.params;
     try {
-        const { email } = req.params;
-        const { name, /* email,  */ type, status, address } = req.body;
-        await putUserController(/* id,  */name, email, type, status, address);
-        res.status(200).send('Modificación exitosa');
+        const updatedUser = await putUserController(email, req.body);
+        res.status(200).json({ message: 'Usuario actualizado correctamente', user: updatedUser });
     } catch (error) {
-        res.status(400).send({ error: error.message });
+        next(error);
     }
 };
 
-const putAddressHandler= async (req,res)=> {
-    try {
-        const {id,address}=req.body;
-        await putAddressController(id,address);
-        res.status(200).send('Modificación exitosa');
-    } catch (error) {
-        res.status(400).send({error: error.message})
-    }
-}
-
-
-
-module.exports = { getUserHandler, postUserHandler, putUserHandler, putAddressHandler };
+module.exports = { getUserHandler, postUserHandler, putUserHandler };

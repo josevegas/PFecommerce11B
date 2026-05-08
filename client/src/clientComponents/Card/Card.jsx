@@ -80,7 +80,15 @@ export default function Card({
     <div className={styles.card}>
       <div className={styles.imageAndLikeContainer}>
         <NavLink className={styles.NavLink} to={`/detail/${id}`}>
-          <img src={image} alt="img not found" className={styles.card_img} />
+          <img 
+            src={image} 
+            alt={name} 
+            className={styles.card_img} 
+            onError={(e) => {
+              e.target.onerror = null; 
+              e.target.src = "https://via.placeholder.com/400x250?text=Vianda+Express";
+            }}
+          />
         </NavLink>
 
         {total_score > 4 && <div className={styles.star}>⭐️</div>}
