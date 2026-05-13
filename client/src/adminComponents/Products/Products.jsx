@@ -18,36 +18,35 @@ const Products = () => {
   const renderFoods = useSelector((state) => state.adminReducer.renderFoods);
 
   useEffect(() => {
-    if (searched === "" && categoryBy === "") {
-      dispatch(setRenderFoodsCase(allFoods));
-    }
-  }, [searched, categoryBy]);
+    let result = [...allFoods];
 
-  const handlerCategoryFilter = (category) => {
-    let filterfoods = [];
-    switch (category) {
-      case "todas":
-        filterfoods = allFoods;
-        break;
-      case "carnes":
-        filterfoods = allFoods.filter((e) => e.category === "Carnes");
-        break;
-      case "pastas":
-        filterfoods = allFoods.filter((e) => e.category === "Pastas");
-        break;
-      case "ensaladas":
-        filterfoods = allFoods.filter((e) => e.category === "Ensaladas");
-        break;
-      default:
-        break;
+    if (searched) {
+      result = result.filter(food => 
+        food.name.toLowerCase().includes(searched.toLowerCase())
+      );
     }
-    dispatch(setRenderFoodsCase(filterfoods));
-  };
+
+    if (categoryBy && categoryBy !== 'todas') {
+      const categoryMap = {
+        'carnes': 'Carnes',
+        'pastas': 'Pastas',
+        'ensaladas': 'Ensaladas',
+        'Carnes': 'Carnes',
+        'Pastas': 'Pastas',
+        'Ensaladas': 'Ensaladas'
+      };
+      const targetCategory = categoryMap[categoryBy] || categoryBy;
+      result = result.filter(food => 
+        food.category.toLowerCase() === targetCategory.toLowerCase()
+      );
+    }
+
+    dispatch(setRenderFoodsCase(result));
+  }, [searched, categoryBy, allFoods, dispatch]);
 
   const handlerChange = (event) => {
     const { value } = event.target;
     dispatch(setCategoryByCase(value));
-    handlerCategoryFilter(value);
     dispatch(setSearchedCase(""));
   };
 

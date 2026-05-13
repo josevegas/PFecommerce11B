@@ -24,46 +24,57 @@ const PieChart = () => {
   };
   return (
     <div className={styles.container}>
-      <div style={{ height: "400px" }}>
-        <div>
-          <h2>Productos mas vendidos</h2>
-          <div className={styles.select}>
-            <h3>Cantidad de productos:</h3>
-            <select
-              onChange={handleChange}
-              value={quantityOfBestSellers}
-              name=""
-              id=""
-            >
-              <option value="3">3</option>
-              <option value="6">6</option>
-              <option value="9">9</option>
-            </select>
-          </div>
-        </div>
-        <div className={styles.chartContainer}>
-          {!bestSellers.message ? (
-            <ResponsivePie
-              data={bestSellers && bestSellers}
-              margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-              innerRadius={0}
-              padAngle={0.7}
-              cornerRadius={3}
-              colors={{ scheme: "category10" }}
-              borderWidth={1}
-              borderColor={{ from: "color", modifiers: [["darker", 0.2]] }}
-              enableRadialLabels={false}
-              enableSliceLabels={true}
-              radialLabelsSkipAngle={10}
-              radialLabelsTextColor="#333333"
-              radialLabelsLinkColor={{ from: "color" }}
-              sliceLabelsSkipAngle={10}
-              sliceLabelsTextColor="#333333"
-            />
-          ) : (
-            <h4>{bestSellers.message}</h4>
-          )}
-        </div>
+      <div className={styles.controls}>
+        <span className={styles.label}>Mostrar top:</span>
+        <select
+          onChange={handleChange}
+          value={quantityOfBestSellers}
+          className={styles.select}
+        >
+          <option value="3">3 productos</option>
+          <option value="6">6 productos</option>
+          <option value="9">9 productos</option>
+        </select>
+      </div>
+      <div className={styles.chartWrapper}>
+        {!bestSellers.message ? (
+          <ResponsivePie
+            data={bestSellers || []}
+            margin={{ top: 20, right: 120, bottom: 20, left: 0 }}
+            innerRadius={0.6}
+            padAngle={2}
+            cornerRadius={8}
+            activeOuterRadiusOffset={8}
+            colors={{ scheme: 'set3' }}
+            borderWidth={0}
+            enableArcLinkLabels={true}
+            arcLinkLabelsSkipAngle={10}
+            arcLinkLabelsTextColor="#64748b"
+            arcLinkLabelsThickness={2}
+            arcLinkLabelsColor={{ from: 'color' }}
+            arcLabelsSkipAngle={10}
+            arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
+            legends={[
+              {
+                anchor: 'right',
+                direction: 'column',
+                justify: false,
+                translateX: 100,
+                translateY: 0,
+                itemsSpacing: 12,
+                itemWidth: 100,
+                itemHeight: 18,
+                itemTextColor: '#64748b',
+                itemDirection: 'left-to-right',
+                itemOpacity: 1,
+                symbolSize: 18,
+                symbolShape: 'circle',
+              }
+            ]}
+          />
+        ) : (
+          <div className={styles.emptyState}>{bestSellers.message}</div>
+        )}
       </div>
     </div>
   );

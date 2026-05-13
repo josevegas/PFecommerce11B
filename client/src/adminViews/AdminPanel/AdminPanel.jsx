@@ -17,11 +17,7 @@ const AdminPanel = () => {
   const allFoods = useSelector((state) => state.foodsReducer.adminFoods);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (!allFoods.length) {
-      axios.get("/api").then(() => dispatch(getAdminFoodsAction()));
-    } else {
-      dispatch(getAdminFoodsAction());
-    }
+    dispatch(getAdminFoodsAction());
   }, [dispatch]);
 
   const renderSelectedOption = () => {

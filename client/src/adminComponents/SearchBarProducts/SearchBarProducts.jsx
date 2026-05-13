@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchedCase, setRenderFoodsCase, setCategoryByCase } from '../../redux/adminSlice';
+import styles from './SearchBarProducts.module.css';
 
 const SearchBarProducts = () => {
     const allFoods = useSelector((state) => state.foodsReducer.adminFoods);
@@ -10,18 +11,17 @@ const SearchBarProducts = () => {
     const handleChange = (e) => {
         const { value } = e.target;
         dispatch(setSearchedCase(value));
-        const searchedProducts = allFoods.filter(product => product.name.toLowerCase().includes(value.toLowerCase()));
-        dispatch(setRenderFoodsCase(searchedProducts));
-        dispatch(setCategoryByCase(''))
+        dispatch(setCategoryByCase(''));
     };
 
     return (
-        <div>
+        <div className={styles.searchContainer}>
             <input
                 value={searched}
                 type="text"
-                placeholder=" 🔍 Buscar por nombre..."
+                placeholder="🔍 Buscar por nombre..."
                 onChange={handleChange}
+                className={styles.searchInput}
             />
         </div>
     );

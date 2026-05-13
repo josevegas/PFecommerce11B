@@ -1,59 +1,92 @@
 .productos {
-  /* Agrega los estilos para el componente Productos */
-  /* Por ejemplo: */
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
-  
-  /* Puedes definir más estilos aquí */
-.addFood{
-  margin: 20px;
-  display:flex;
+
+.header {
+  margin-bottom: 0.5rem;
+}
+
+.header h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.addFood {
+  display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 0;
 }
 
-.destable{
-  border-collapse: collapse;
-  min-width: 1111px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+.destable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.destable thead tr {
-  background-color: var(--accentColor2);
-  color: #ffffff; 
-  text-align: middle;
-  height: 40px;
-  font-size: 18px;
+.destable thead {
+  background-color: #f8fafc;
 }
 
-.destable th .destable td {
-  padding: 12px 15px;
-}
-
-.destable tbody tr {
-  border-bottom: 1px solid #dddddd; 
-  } 
-  .destable tbody tr:nth-of-type(even) { 
-      background-color: #f3f3f3; 
-  }
-  .destable tbody tr:last-of-type {
-      border-bottom: 2px solid #009879;
+.destable th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .viewAllButton {
-  background-color: var(--accentColor);
-  border-radius: 15px;
-  padding: 1px;
-  border: solid 4px white;
+  background-color: #3b82f6;
   color: white;
-  font-size: 20px;
-  transition: transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .viewAllButton:hover {
-  background-color: var(--accentColor2);
-  transform: scale(1.1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  transition: 0.5s;
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Select styling */
+select.viewAllButton {
+  background-color: white;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='C19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  min-width: 160px;
+  max-width: 200px;
+}
+
+@media (max-width: 1024px) {
+  .destable {
+    display: block;
+    overflow-x: auto;
+  }
 }

@@ -1,9 +1,8 @@
-// VIEW EDIT
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { getAdminFoodsAction, getFoods, putFoods } from "../../redux/foodActions.js";
+import { getAdminFoodsAction, getFoods } from "../../redux/foodActions.js";
 import { useNavigate } from "react-router-dom";
 import styles from "./EditFood.module.css";
 import Swal from "sweetalert2";
@@ -17,35 +16,26 @@ export default function EditFood() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const allFoods = useSelector((state) => state.foodsReducer.allFoods);
+  const allFoods = useSelector((state) => state.foodsReducer.adminFoods);
 
-  const [errors, setErrors] = useState({
-    id: "",
-    name: "",
-    initial_price: "",
-    discount: "",
-    status: "",
-    description: "",
-    image: null,
-  });
-
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     id: "",
     name: "",
-    initial_price: "",
-    discount: "",
-    status: "",
+    initial_price: 0,
+    discount: 0,
+    status: true,
     description: "",
+    category: "",
+    diets: [],
     image: null,
   });
 
   useEffect(() => {
     if (!allFoods.length) {
-      axios.get("/api").then(() => dispatch(getFoods()));
-    } else {
-      dispatch(getFoods());
+      dispatch(getAdminFoodsAction());
     }
-  }, [dispatch]);
+  }, [dispatch, allFoods.length]);
 
   useEffect(() => {
     const foodToEdit = allFoods.find((food) => food.id === id);
@@ -71,120 +61,51 @@ export default function EditFood() {
   };
 
   const handleEdit = async (e) => {
-    setErrors(validation(formData));
-    if (
-      !formData.name ||
-      !formData.description ||
-      !formData.category ||
-      !formData.diets.length ||
-      formData.initial_price < 0 ||
-      formData.discount < 0 ||
-      formData.discount > 100
-    ) {
+    e.preventDefault();
+    const validationErrors = validation(formData);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
       Swal.fire({
-        title: "Por favor llenar todos los campos",
+        title: "Por favor corrige los errores",
         icon: "warning",
-        footer: 'Vianda Express',
-        imageUrl: logo,
-        toast: true,
-        timer: 5000,
-        timerProgressBar: true,
-        confirmButtonColor: 'var(--accentColor)',
-        showClass: {
-        popup: 'animate__animated animate__fadeInDown'
-             },
-          hideClass: {
-        popup: 'animate__animated animate__fadeOutUp'
-             }
-        });
-    } else {
-      e.preventDefault();
-      Swal.fire({
-        title: "Estas Seguro?",
-        text: "¡Puedes modificar en cualquier momento!",
-        icon: "warning",
-        imageUrl: logo,
-        toast: true,
-        footer: 'Vianda Express',
-        showCancelButton: true,
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, ¡Modificar!",
-        cancelButtonText: "Cancelar",
-        confirmButtonColor: 'var(--accentColor)',
-        showClass: {
-        popup: 'animate__animated animate__fadeInDown'
-             },
-          hideClass: {
-        popup: 'animate__animated animate__fadeOutUp'
-             }
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          const form = new FormData();
-          for (let key in formData) {
+        confirmButtonColor: '#3b82f6',
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: "¿Guardar cambios?",
+      text: "Se actualizará la información de la vianda",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, guardar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: '#3b82f6',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const form = new FormData();
+        for (let key in formData) {
+          if (key === 'diets') {
+            form.append(key, formData[key]);
+          } else {
             form.append(key, formData[key]);
           }
-          try {
-            await axios.put(`/food/${id}`, formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            });
-            dispatch(setSearchedCase(""))
-            dispatch(setCategoryByCase(""))
-            dispatch(getAdminFoodsAction())
-            Swal.fire({
-              title: "Modificada!",
-              text: `Receta de ${formData.name} modificada.`,
-              icon: "success",
-              imageUrl: logo,
-              toast: true,
-              footer: 'Vianda Express',
-              confirmButtonColor: 'var(--accentColor)',
-              showClass: {
-              popup: 'animate__animated animate__fadeInDown'
-                   },
-                hideClass: {
-              popup: 'animate__animated animate__fadeOutUp'
-                   }
-            }
-            );
-            navigate("/admin");
-          } catch (error) {
-            Swal.fire({
-              title: "Error del sistema",
-              text: `${error.message}`,
-              icon: "warning",
-              imageUrl: logo,
-              toast: true,
-              footer: 'Vianda Express',
-              confirmButtonColor: 'var(--accentColor)',
-              showClass: {
-              popup: 'animate__animated animate__fadeInDown'
-                   },
-                hideClass: {
-              popup: 'animate__animated animate__fadeOutUp'
-                   }
-            });
-          }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          Swal.fire({
-            title: "Cancelado",
-            text: "Los cambios no se guardaron",
-            icon: "success",
-            imageUrl: logo,
-            toast: true,
-            footer: 'Vianda Express',
-            confirmButtonColor: 'var(--accentColor)',
-            showClass: {
-              popup: 'animate__animated animate__fadeInDown'
-                },
-            hideClass: {
-               popup: 'animate__animated animate__fadeOutUp'
-                },
-          });
         }
-      });
-    }
+        try {
+          await axios.put(`/food/${id}`, form, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          dispatch(setSearchedCase(""))
+          dispatch(setCategoryByCase(""))
+          dispatch(getAdminFoodsAction())
+          Swal.fire("¡Éxito!", "Vianda actualizada correctamente", "success");
+          navigate("/admin");
+        } catch (error) {
+          Swal.fire("Error", "No se pudo actualizar la vianda", "error");
+        }
+      }
+    });
   };
 
   const handleImageChange = (e) => {
@@ -202,23 +123,24 @@ export default function EditFood() {
         <div className={styles.container}>
           <div className={styles.cabecera}>
             <h4>Editar Vianda</h4>
-            <div className={styles.containergen}>
-              <div className={styles.container1}>
-                <h3>Nombre: </h3>
+          </div>
+          <form className={styles.containergen}>
+            <div className={styles.container1}>
+              <div className={styles.cont}>
+                <h3>Nombre de la Vianda</h3>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
+                  className={styles.inputText}
                 />
-                {errors.name ? (
-                  <div className={styles.errorsContainer}>
-                    <p className={styles.errorMessage}>{errors.name}</p>
-                  </div>
-                ) : null}
+                {errors.name && <p className={styles.errorMessage}>{errors.name}</p>}
+                
+                <h3>Imagen Actual</h3>
                 <img
-                  src={formData.image}
-                  alt="img not found"
+                  src={typeof formData.image === 'string' ? formData.image : URL.createObjectURL(formData.image)}
+                  alt="preview"
                   className={styles.image}
                 />
                 <input
@@ -228,122 +150,63 @@ export default function EditFood() {
                   onChange={handleImageChange}
                 />
               </div>
-              <div className={styles.container2}>
-                <div className={styles.cont}>
-                  <label>
-                    <h3>Descripción: </h3>
-                  </label>
-                  <textarea
-                    type="text"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                  />
-                  {errors.description ? (
-                    <div className={styles.errorsContainer}>
-                      <p className={styles.errorMessage}>
-                        {errors.description}
-                      </p>
-                    </div>
-                  ) : null}
-                  <label>
-                    <h3>Precio Inicial: </h3>
-                  </label>
-                  <input
-                    type="number"
-                    name="initial_price"
-                    value={formData.initial_price}
-                    onChange={handleChange}
-                  />
-                  {errors.initial_price ? (
-                    <div>
-                      <p className={styles.errorMessage}>
-                        {errors.initial_price}
-                      </p>
-                    </div>
-                  ) : null}
-                  <label>
-                    <h3>Descuento: </h3>
-                  </label>
-                  <input
-                    type="number"
-                    name="discount"
-                    value={formData.discount}
-                    onChange={handleChange}
-                  />
-                  <label>
-                    {errors.discount ? (
-                      <div className={styles.errorsContainer}>
-                        <p className={styles.errorMessage}>{errors.discount}</p>
-                      </div>
-                    ) : null}
-                    <h3>Estado: </h3>
-                  </label>
-                  <select
-                    type="text"
-                    name="status"
-                    value={formData.status}
-                    onChange={handleSelect}
-                  >
-                    <option value={true}>Habilitado</option>
-                    <option value={false}>Deshabilitado</option>
-                  </select>
+            </div>
+            <div className={styles.container2}>
+              <div className={styles.cont}>
+                <h3>Descripción</h3>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className={styles.inputTextArea}
+                />
+                {errors.description && <p className={styles.errorMessage}>{errors.description}</p>}
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <h3>Precio Base</h3>
+                    <input
+                      type="number"
+                      name="initial_price"
+                      value={formData.initial_price}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <h3>Descuento (%)</h3>
+                    <input
+                      type="number"
+                      name="discount"
+                      value={formData.discount}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
+
+                <h3>Estado de Disponibilidad</h3>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleSelect}
+                >
+                  <option value={true}>Habilitado</option>
+                  <option value={false}>Deshabilitado</option>
+                </select>
               </div>
             </div>
-            <div className={styles.divbtn}>
-              <button className={styles.butedit} onClick={handleEdit}>
-                Guardar
+          </form>
+          <div className={styles.divbtn}>
+            <button className={styles.butedit} onClick={handleEdit}>
+              Guardar Cambios
+            </button>
+            <Link to="/admin" style={{ flex: 1 }}>
+              <button className={styles.butedit} style={{ width: '100%' }}>
+                Cancelar
               </button>
-              <Link to="/admin">
-                <button className={styles.butedit}>Cancelar</button>
-              </Link>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
     </main>
   );
 }
-
-// OLD
-// const handleDelete = async (e) => {
-//   e.preventDefault();
-//   //var verificar= window.confirm(`Está a punto de eliminar la vianda`)
-//   Swal.fire({
-//     title: 'Estas Seguro?',
-//     text: "¡No podrás revertir esto!",
-//     icon: 'warning',
-//     showCancelButton: true,
-//     confirmButtonColor: '#3085d6',
-//     cancelButtonColor: '#d33',
-//     confirmButtonText: 'Si, ¡Eliminar!',
-//     cancelButtonText: 'Cancelar'
-//   }).then((result) => {
-//     if(result.isConfirmed){
-//       try {
-//         axios.delete(`/food/${id}`);
-//           //alert(`Receta de ${formData.name} modificada`);
-//           Swal.fire(
-//             'Eliminada!',
-//             `Vianda ${formData.name} Eliminada.`,
-//             'success'
-//           )
-//           navigate('/admin');
-//       } catch (error) {
-//           //alert(error.message)
-//           Swal.fire(
-//             'Error del sistema',
-//             `${error.message}`,
-//             'warning',
-//             )
-//       }
-//     }else if(result.dismiss === Swal.DismissReason.cancel){
-//       Swal.fire(
-//       'Cancelado',
-//       'Los cambios no se guardaron',
-//       'success'
-//       )
-//     }
-//   })
-// };

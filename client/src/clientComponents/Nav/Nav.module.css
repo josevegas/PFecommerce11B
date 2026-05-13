@@ -48,7 +48,8 @@
   align-items: center;
 }
 
-.normalLink, .user {
+.normalLink,
+.user {
   text-decoration: none;
   font-size: 16px;
   font-weight: 500;
@@ -59,7 +60,8 @@
   cursor: pointer;
 }
 
-.normalLink:hover, .user:hover {
+.normalLink:hover,
+.user:hover {
   color: var(--primary);
 }
 
@@ -90,25 +92,43 @@
   align-items: center;
 }
 
-.options { 
+.options {
   position: absolute;
-  top: calc(100% + 15px);
+  top: calc(100% + 5px);
   right: 0;
-  min-width: 180px;
+  min-width: 200px;
   display: flex;
   flex-direction: column;
+  gap: 8px;
   background: var(--white);
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   border-radius: var(--radius-md);
-  padding: 10px;
+  padding: 12px;
   z-index: 1100;
   border: 1px solid var(--glass-border);
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.options::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: transparent;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .option {
@@ -139,7 +159,7 @@
   .navul {
     display: none;
   }
-  
+
   .menumobil {
     display: block;
   }

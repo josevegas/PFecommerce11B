@@ -4,7 +4,7 @@ const { updateCartTotalPrice } = require("./updateCartTotalPrice");
 const putItemController = async (orderId, itemId, quantity, amount) => {
   const t = await sequelize.transaction();
   try {
-    const [uodatedRows] = await Item.update(
+    const [updatedRows] = await Item.update(
       { quantity, amount },
       {
         where: {

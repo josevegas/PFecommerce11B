@@ -10,9 +10,9 @@ const { Review, Food, sequelize, Item, User } = require("../../db");
  */
 const postReviewController = async (foodId, userId, comment, rating, itemId) => {
   // Validation
-  if (!foodId || !userId || !itemId) throw new Error("Missing required IDs (foodId, userId, itemId)");
-  if (rating < 1 || rating > 5) throw new Error("Rating must be between 1 and 5");
-  if (!comment || comment.trim().length === 0) throw new Error("Comment cannot be empty");
+  if (!foodId || !userId || !itemId) throw new Error("Faltan IDs obligatorios");
+  if (rating < 1 || rating > 5) throw new Error("La calificación debe estar entre 1 y 5");
+  if (!comment || comment.trim().length === 0) throw new Error("El comentario no puede estar vacío");
 
   // Check if entities exist
   const [food, user, item] = await Promise.all([
@@ -52,7 +52,7 @@ const postReviewController = async (foodId, userId, comment, rating, itemId) => 
       const average = averageResult.get('averageRating') || rating; // Fallback to current rating if first review
 
       await Food.update(
-        { total_score: parseFloat(average).toFixed(2) }, 
+        { total_score: parseFloat(average).toFixed(2) },
         { where: { id: foodId }, transaction: t }
       );
 

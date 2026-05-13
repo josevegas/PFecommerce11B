@@ -1,9 +1,42 @@
 .adminPanel {
-  display: grid;
-  grid-template-columns: 1fr 5fr; 
-  height: 100vh; 
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 .adminContent {
-  background-color: white;
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background-color: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+/* Scrollbar styling for a cleaner look */
+.adminContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.adminContent::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.adminContent::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.adminContent::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .adminPanel {
+    flex-direction: column;
+  }
+  
+  .adminContent {
+    padding: 1rem;
+  }
 }

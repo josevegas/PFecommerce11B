@@ -82,25 +82,32 @@ const ListOrders = ({id, User_name, total_price, createdAt, status, order_status
         dispatch(updateOrderStatusAction(id, newOrderStatus));
       };
       */
+    const statusClass = status === 'approved' ? styles['status-approved'] : styles['status-pending'];
+
     return(
         <tr className={styles.tds}>
-            <td className={styles.tbodys}>{id.substring(id.length - 4)}</td>
-            <td className={styles.tbodys}>{User_name}</td>
-            <td className={styles.tbodys}>{total_price}</td>
-            <td className={styles.tbodys}>{createdAt}</td>
-            <td className={styles.tbodys}>{status}</td>
+            <td className={styles.tbodys}>#{id.substring(id.length - 4)}</td>
+            <td className={styles.tbodys} style={{ fontWeight: 500 }}>{User_name}</td>
+            <td className={styles.tbodys}>${total_price}</td>
+            <td className={styles.tbodys}>{new Date(createdAt).toLocaleDateString()}</td>
             <td className={styles.tbodys}>
-                <select className={styles.btnorder} value={selectedStatus} onChange={handleChangeSelect}>
-                    <option value="">Seleccionar Estado</option>
-                    <option value="Procesando">Procesando{order_status==="Procesando"? "->Procesando":null}</option>
-                    <option value="Enviado">Enviado{order_status==="Enviado"? "->Enviado":null}</option>
-                    <option value="Entregado">Entregado {order_status==="Entregado"? "->Entregado":null}</option>
+                <span className={`${styles.badge} ${statusClass}`}>
+                  {status}
+                </span>
+            </td>
+            <td className={styles.tbodys}>
+                <select className={styles.select} value={selectedStatus || order_status} onChange={handleChangeSelect}>
+                    <option value="">Cambiar Estado</option>
+                    <option value="Procesando">Procesando</option>
+                    <option value="Enviado">Enviado</option>
+                    <option value="Entregado">Entregado</option>
                 </select>
             </td>
-            <label>{order_status}</label>
             <td className={styles.tbodys}>
                 <Link to={`/order/detail/${id}`}>
-                    <button><FontAwesomeIcon icon={faListOl} /></button>
+                    <button className={styles.button} title="Ver Detalle">
+                      <FontAwesomeIcon icon={faListOl} />
+                    </button>
                 </Link>
             </td>
         </tr>  

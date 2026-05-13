@@ -1,55 +1,89 @@
 .sidebar {
-  background-color: var(--accentColor);
-  padding: 20px;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-  color: white;
-}
-
-.option {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.clientOption {
-  margin-top: 40px;
-}
-
-.sep {
-  margin: 0px 4px 0px 0px;
-  color: white;
-}
-
-.option:hover {
-  background-color: var(--accentColor2);
-}
-
-.activeOption {
-  background-color: var(--accentColor2);
+  width: 280px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  transition: all 0.3s ease;
 }
 
 .sidebar ul {
+  list-style: none;
+  padding: 1.5rem 1rem;
   display: flex;
   flex-direction: column;
-  height: fit-content;
+  gap: 0.5rem;
+  flex-grow: 1;
 }
-.back-home {
+
+.option {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 50px;
-  background-color: #f0f0f0;
-  border-top: 1px solid #ccc;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.option:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  transform: translateX(4px);
+}
+
+.activeOption {
+  background: #3b82f6 !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.sep {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 1rem;
+  opacity: 0.8;
+}
+
+.clientOption {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .link {
-  color: inherit;
   text-decoration: none;
+  color: inherit;
+  margin-top: auto;
 }
 
-.bottom-option:hover {
-  background-color: #e0e0e0;
+/* User profile section in sidebar (optional but looks good) */
+.userProfile {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+  }
+  
+  .sidebar ul {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.75rem;
+  }
+  
+  .option {
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+  }
 }

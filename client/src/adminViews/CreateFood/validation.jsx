@@ -13,8 +13,8 @@ export default function validation(input) {
     errors.diets =
       "¡Cuidado! Has olvidado indicar el tipo de dieta de tu vianda";
   }
-  if (input.price < 0) {
-    errors.price = "¡Cuidado! Los precios no pueden ser menores a cero";
+  if (input.initial_price < 0) {
+    errors.initial_price = "¡Cuidado! Los precios no pueden ser menores a cero";
   }
   if (input.discount < 0 || input.discount > 100) {
     errors.discount =

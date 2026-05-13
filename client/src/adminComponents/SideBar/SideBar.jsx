@@ -19,13 +19,36 @@ const SideBar = () => {
     (state) => state.adminReducer.sidebarOption
   );
   const handleOptionSelect = (option) => {
-    
     navigate("/admin");
     dispatch(setSidebarOption(option));
   };
+  const currentUser = useSelector((state) => state.usersReducer.userDetail);
 
   return (
     <div className={style.sidebar}>
+      <div className={style.userProfile}>
+        <div style={{
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
+          backgroundColor: '#3b82f6',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 'bold',
+          fontSize: '1.2rem'
+        }}>
+          {currentUser?.name?.[0] || user?.nickname?.[0] || 'A'}
+        </div>
+        <div style={{ overflow: 'hidden' }}>
+          <p style={{ margin: 0, fontWeight: 600, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {currentUser?.name || user?.nickname || 'Admin'}
+          </p>
+          <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {currentUser?.email}
+          </p>
+        </div>
+      </div>
       <ul>
         <li>
           <div

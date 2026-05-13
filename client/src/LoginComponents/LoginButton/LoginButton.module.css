@@ -1,27 +1,26 @@
-
-.divlogin{
-    margin-top: 50px;
+.divlogin {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .btnuser {
-    background-color: var(--accentColor);
-    border-radius: 5px;
-    border: solid 4px white;
-    color: white;
-    font-size: 15px;
-    transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-  }
-  
-  .btnuser:hover {
-    background-color: var(--accentColor2);
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: 0.5s;
-  }
+  background-color: var(--primary);
+  border-radius: var(--radius-sm);
+  border: none;
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  width: 100%;
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-  @media screen and (max-width: 780px){
-    .btnuser {
-        margin-left: 350px;
-    }
-  }
+.btnuser:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

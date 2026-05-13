@@ -38,40 +38,39 @@ const Orders = () => {
   });
 
   return (
-    <div className={styles.orderdiv}>
-      <h2>Nuestras Ordenes</h2>
-      <div className={styles.orderfilter}>
+    <div className={styles.container}>
+      <h2 className={styles.title}>Nuestras Ordenes</h2>
+      <div className={styles.filters}>
         <select
-          className={styles.btnorder}
+          className={styles.select}
           value={filterPaymentStatus}
           onChange={handlePaymentFilterChange}
         >
-          <option value="">Filtrar por estado de pago</option>
+          <option value="">Estado de Pago</option>
           <option value="approved">Aprobado</option>
           <option value="PENDIENTE">Pendiente</option>
         </select>
         <select
-          className={styles.btnorder}
+          className={styles.select}
           value={filterStatus}
           onChange={handleFilterChange}
         >
-          <option value="">Filtrar por Estado Orden</option>
+          <option value="">Estado de Orden</option>
           <option value="Procesando">Procesando</option>
           <option value="Enviado">Enviado</option>
           <option value="Entregado">Entregado</option>
         </select>
       </div>
-      <table className={styles.ordertable}>
+      <table className={styles.table}>
         <thead>
           <tr>
             <th>Id</th>
             <th>Cliente</th>
-            <th>Precio Total</th>
+            <th>Total</th>
             <th>Fecha</th>
-            <th>Estado Pago</th>
-            <th>Estado Orden</th>
-            <th></th>
-            <th>Detalle</th>
+            <th>Pago</th>
+            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>

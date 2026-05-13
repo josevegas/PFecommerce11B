@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import "./App.css";
 import Nav from "./clientComponents/Nav/Nav.jsx";
@@ -18,28 +19,45 @@ import UserOrder from "./clientViews/UserOrder/UserOrder";
 import UserOrderDetail from "./clientViews/UserOrderDetail/UserOrderDetail";
 import MyProfile from "./clientViews/MyProfile/MyProfile.jsx";
 import MyFavorites from "./clientViews/MyFavorites/MyFavorites.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { getPendingOrderAction } from "./redux/shopingCartSlice";
+import { getUserDetailAction } from "./redux/userSlice";
 
 function App() {
   const location = useLocation();
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { user, isAuthenticated } = useAuth0();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.usersReducer.userDetail);
 
   useEffect(() => {
-    const searchUserType = async () => {
-      try {
-        const response = await axios.get("/user", { 
-          params: {
-            type: "Admin",
-          },
-        });
-        const userAdmin = response.data;
-        setIsAdmin(userAdmin.length > 0);
-      } catch (error) {
-        console.log("Error en la petición:", error);
-      }
-    };
-    searchUserType();
-  }, []);
+    if (isAuthenticated && user) {
+      const syncUser = async () => {
+        try {
+          await axios.post("/user", {
+            name: user.name || user.nickname,
+            email: user.email,
+            type: "Cliente", // Default role
+            status: true,
+            address: "", // Can be updated later
+          });
+          // Load user details and pending order after sync
+          dispatch(getUserDetailAction(user.email));
+          dispatch(getPendingOrderAction(user.email));
+        } catch (error) {
+          console.error("Error syncing user:", error);
+        }
+      };
+      syncUser();
+    }
+  }, [isAuthenticated, user, dispatch]);
+
+  const isActualAdmin =
+    isAuthenticated && (
+      currentUser?.type === "Admin" ||
+      user?.email === "viandaexpress84@gmail.com" ||
+      user?.email === "thecat_18@hotmail.com"
+    );
 
   return (
     <div className="app">
@@ -55,19 +73,19 @@ function App() {
         <Route path="/detail/:id" element={<Detail />} />
         <Route
           path="/admin/*"
-          element={isAdmin ? <AdminPanel /> : <Navigate to="/" />}
+          element={isActualAdmin ? <AdminPanel /> : <Navigate to="/" />}
         />
         <Route
           path="/admin/create"
-          element={isAdmin ? <CreateFood /> : <Navigate to="/" />}
+          element={isActualAdmin ? <CreateFood /> : <Navigate to="/" />}
         />
         <Route
           path="/order/detail/:id"
-          element={isAdmin ? <OrderDetail /> : <Navigate to="/" />}
+          element={isActualAdmin ? <OrderDetail /> : <Navigate to="/" />}
         />
         <Route
           path="/admin/edit/:id"
-          element={isAdmin ? <EditForm /> : <Navigate to="/" />}
+          element={isActualAdmin ? <EditForm /> : <Navigate to="/" />}
         />
         <Route path="/shoppingcart" element={<ShoppingCar />} />
         <Route path="/payment" element={<PaymentStatus />} />

@@ -2,7 +2,9 @@ const { User } = require("../../db");
 const sendEmailWelcome = require("../../nodemailer/SendEmailWelcome/sendEmail.js");
 
 const postUserController = async (name, email, type, status, address) => {
-  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",");
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim());
 
   // Determinamos el rol
   let userRole = type;

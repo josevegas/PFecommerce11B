@@ -2,7 +2,7 @@ const { User } = require("../../db");
 
 const getAllUsersController = async () => {
   const allUsers = await User.findAll({
-    where: { status: "Activo" },
+    where: { status: true },
     order: [["name", "ASC"]]
   });
   return allUsers;

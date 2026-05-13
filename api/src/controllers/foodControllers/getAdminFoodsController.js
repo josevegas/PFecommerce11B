@@ -1,4 +1,4 @@
-const { Food } = require("../../db");
+const { Food, sequelize } = require("../../db");
 
 const getAdminFoodController = async () => {
   return await Food.findAll({

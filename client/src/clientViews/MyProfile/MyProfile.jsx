@@ -11,54 +11,50 @@ import SidebarUser from "../../clientComponents/SidebarUser/SidebarUser";
 
 const MyProfile = () => {
   const dispatch = useDispatch();
-  const userDetailArray = useSelector((state) => state.usersReducer.userDetail);
+  const userDetail = useSelector((state) => state.usersReducer.userDetail);
   const [editableField, setEditableField] = useState(false);
-  const { user, isAuthenticated } = useAuth0();
+  const { user } = useAuth0();
+  //Estados locales para guardar la info a editar
+  const [address, setAddress] = useState(userDetail?.address || "");
+  const [name, setName] = useState(userDetail?.name || user?.name || "");
 
   useEffect(() => {
-    if (!userDetailArray.length) { /* userDetailArray is an array because the back does a findAll instead of a findOne */
-      dispatch(getUserDetailAction(user?.email));
+    // Si userDetail no tiene propiedades (objeto vacío) o su email no coincide con el logueado, lo traemos
+    if (!userDetail || Object.keys(userDetail).length === 0 || userDetail.email !== user?.email) {
+      if (user?.email) {
+        dispatch(getUserDetailAction(user?.email));
+      }
+    } else {
+      // Sincronizar estados locales cuando llega la info de la DB
+      setAddress(userDetail?.address || "");
+      setName(userDetail?.name || user?.name || "");
     }
-  }, [user, dispatch]);
-
-  const [address, setAddress] = useState(userDetailArray[0]?.address);
+  }, [user, dispatch, userDetail]);
 
 
   const handleEdit = () => {
+    if (editableField) {
+      // Si cancela, restauramos los valores originales
+      setAddress(userDetail?.address || "");
+      setName(userDetail?.name || user?.name || "");
+    }
     setEditableField(!editableField);
-  };
-
-  const handleChange = (e) => {
-    setAddress(e.target.value)
   };
 
   const handleSave = async () => {
     try {
-      const response = await axios.put(`/user/${user.email}`, {address: address});
-      console.log('response: ', response);
-      dispatch(getUserDetailAction(user.email));
-      handleEdit();
-
+      //Enviamos ambos campos al backend
+      await axios.put(`/user/${user?.email}`, { address: address, name: name });
       Swal.fire({
-        title: "¡Éxito!",
-        text: "Perfil editado correctamente",
+        title: "¡Actualizado!",
+        text: "Tus datos se han guardado correctamente.",
         icon: "success",
-        confirmButtonText: "Continuar",
-        footer: "Vianda Express",
-        imageUrl: logo,
-        toast: true,
-        timer: 4000,
-        timerProgressBar: true,
-        confirmButtonColor: "var(--accentColor)",
-        showClass: {
-          popup: "animate__animated animate__fadeInDown",
-        },
-        hideClass: {
-          popup: "animate__animated animate__fadeOutUp",
-        },
+        confirmButtonColor: "#28a745",
       });
+      setEditableField(false);
+      dispatch(getUserDetailAction(user?.email));
     } catch (error) {
-      window.alert({error: error.message})
+      window.alert({ error: error.message })
       Swal.fire({
         title: "Error",
         text: "Error de Sistema",
@@ -88,9 +84,17 @@ const MyProfile = () => {
         <h1>Mis datos</h1>
         <section>
           <div className={styles.form}>
+            {/* nombre */}
             <div className={styles.rowContainer}>
               <label htmlFor="name">Nombre:</label>
-              <p name="email">{user?.name}</p>
+              <br />
+              <input
+                className={styles.input}
+                type="text"
+                value={name}
+                disabled={!editableField}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
             {/* email */}
             <div className={styles.rowContainer}>
@@ -99,7 +103,7 @@ const MyProfile = () => {
             </div>
 
             <div className={styles.rowContainer}>
-              <img src={user?.picture} alt="Foto de perfil" />
+              <img src={user?.picture} alt="Foto de perfil" className={styles.profileImage} />
             </div>
 
             {/* address */}
@@ -109,25 +113,19 @@ const MyProfile = () => {
               <input
                 className={styles.input}
                 type="text"
-                name="address"
                 value={address}
                 disabled={!editableField}
-                onChange={handleChange}
-                placeholder={userDetailArray[0]?.address}
+                onChange={(e) => setAddress(e.target.value)}
               />
             </div>
 
             <div className={styles.buttonGroup}>
               <button className={styles.editButton} type="button" onClick={handleEdit}>
-                {editableField ? "CANCELAR" : "EDITAR DOMICILIO"}
+                {editableField ? "CANCELAR" : "EDITAR PERFIL"}
               </button>
 
               {editableField && (
-                <button
-                  className={styles.saveButton}
-                  type="button"
-                  onClick={handleSave}
-                >
+                <button className={styles.saveButton} type="button" onClick={handleSave}>
                   GUARDAR CAMBIOS
                 </button>
               )}

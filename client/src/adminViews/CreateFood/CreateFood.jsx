@@ -222,9 +222,9 @@ export default function CreateFood() {
               </label>
               <select onChange={handleSelect} value={input.category}>
                 <option value="">--Seleccionar--</option>
-                {categories.map((ca) => {
-                  return <option value={ca}>{ca}</option>;
-                })}
+                {categories.map((ca) => (
+                  <option key={ca} value={ca}>{ca}</option>
+                ))}
               </select>
 
               {errors.category ? (

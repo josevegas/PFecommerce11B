@@ -56,6 +56,9 @@ export const getPendingOrderAction = (userId) => async (dispatch) => {
       .get(`/order/${userId}`)
       .then((r) => r.data[0]);
     dispatch(getPendingOrderCase(pendingOrder));
+    if (pendingOrder && pendingOrder.Items) {
+      dispatch(getItems(pendingOrder.Items));
+    }
   } catch (error) {
     console.log(error);
   }
