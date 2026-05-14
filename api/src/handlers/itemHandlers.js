@@ -4,10 +4,10 @@ const { deleteItemController } = require("../controllers/itemControllers/deleteI
 
 const postItemHandler = async (req, res, next) => {
   try {
-    const { FoodId, OrderId, final_price, quantity, amount } = req.body;
+    const { FoodId, email, final_price, quantity, amount } = req.body;
     const setItem = await postItemController(
+      email,
       FoodId,
-      OrderId,
       final_price,
       quantity,
       amount

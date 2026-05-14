@@ -64,50 +64,50 @@ export const getPendingOrderAction = (userId) => async (dispatch) => {
   }
 };
 export const setItemsActions =
-  ({ Food, FoodId, OrderId, final_price, quantity, amount }) =>
-  async (dispatch) => {
-    try {
-      // amount=quantity*final_price
-      const item = await axios
-        .post("/item", {
-          FoodId: FoodId,
-          OrderId: OrderId,
-          final_price: final_price,
-          quantity: quantity,
-          amount: amount,
-        })
-        .then((r) => r.data);
-      console.log("setItemsActions: ", item);
-      dispatch(setItems({ Food: Food, ...item }));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  ({ Food, FoodId, email, final_price, quantity, amount }) =>
+    async (dispatch) => {
+      try {
+        // amount=quantity*final_price
+        const item = await axios
+          .post("/item", {
+            FoodId: FoodId,
+            email: email,
+            final_price: final_price,
+            quantity: quantity,
+            amount: amount,
+          })
+          .then((r) => r.data);
+        console.log("setItemsActions: ", item);
+        dispatch(setItems({ Food: Food, ...item }));
+      } catch (error) {
+        console.log(error.response?.data);
+      }
+    };
 
 export const deleteItemActions =
   ({ id, OrderId }) =>
-  async (dispatch) => {
-    try {
-      console.log("deleteItemsActions", id, OrderId);
-      await axios.delete(`/item/${id}`, { data: { OrderId } });
-      dispatch(deleteItems(id));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    async (dispatch) => {
+      try {
+        console.log("deleteItemsActions", id, OrderId);
+        await axios.delete(`/item/${id}`, { data: { OrderId } });
+        dispatch(deleteItems(id));
+      } catch (error) {
+        console.log(error);
+      }
+    };
 export const putItemActions =
   ({ orderId, itemId, quantity, amount }) =>
-  async (dispatch) => {
-    try {
-      await axios.put("/item", {
-        orderId,
-        itemId,
-        quantity,
-        amount,
-      });
-      console.log("putItemAction: ", itemId);
-      dispatch(putItems({ itemId, quantity, amount }));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    async (dispatch) => {
+      try {
+        await axios.put("/item", {
+          orderId,
+          itemId,
+          quantity,
+          amount,
+        });
+        console.log("putItemAction: ", itemId);
+        dispatch(putItems({ itemId, quantity, amount }));
+      } catch (error) {
+        console.log(error);
+      }
+    };

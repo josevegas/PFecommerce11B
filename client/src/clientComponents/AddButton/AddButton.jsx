@@ -78,9 +78,7 @@ export default function AddButton({
           setItemsActions({
             Food: Food,
             FoodId: id,
-            OrderId: orderUser.id,
-            name: Food.name,
-            image: Food.image,
+            email: user.email,
             final_price: Food.final_price,
             quantity: quantity,
             amount: amount,
